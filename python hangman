@@ -1,0 +1,138 @@
+# hangman.py  ––  Minimal terminal Hangman clone.
+#
+# * Chooses a random 4-10-letter English word (lower-case, alphabetic only)
+#   from the GCIDE word set via `english_words`.
+# * Player gets 6 wrong guesses; each miss adds a body part to the gallows.
+# * Prints ASCII art for visual feedback.
+#
+
+
+from english_words import get_english_words_set
+import random
+
+# --------------------------------------------------------------------------- #
+#  Constants                                                                  #
+# --------------------------------------------------------------------------- #
+
+# Gallows frames: index 0 == no misses, index 6 == full figure
+HANGMAN_ART = ['''
+  +---+
+  |   |
+      |
+      |
+      |
+      |
+=========''', '''
+  +---+
+  |   |
+  O   |
+      |
+      |
+      |
+=========''', '''
+  +---+
+  |   |
+  O   |
+  |   |
+      |
+      |
+=========''', '''
+  +---+
+  |   |
+  O   |
+ /|   |
+      |
+      |
+=========''', '''
+  +---+
+  |   |
+  O   |
+ /|\  |
+      |
+      |
+=========''', '''
+  +---+
+  |   |
+  O   |
+ /|\  |
+ /    |
+      |
+=========''', '''
+  +---+
+  |   |
+  O   |
+ /|\  |
+ / \  |
+      |
+=========''']
+
+# --------------------------------------------------------------------------- #
+#  Helper functions                                                           #
+# --------------------------------------------------------------------------- #
+
+def pick_word():
+    words = [w for w in get_english_words_set(['gcide'], lower=True)
+             if 4 <= len(w) <= 10 and w.isalpha()]
+    return random.choice(words)
+'''
+    Return one random lowercase English word whose length is *min_len*‒*max_len*.
+
+    Filtering keeps gameplay fair by excluding proper nouns, hyphenated words,
+    and very long / obscure vocabulary.
+'''
+
+#Game Variables
+answer = pick_word()
+display = ["_"] * len(answer)
+user_guess_list = []
+number_of_guesses = 0
+lives = 6
+
+print("HELLO! Welcome to Hangman.")
+print(f"The word you are trying to guess has {len(answer)} characters. Let's begin. You have 6 guesses left.")
+
+# Loop until either the word is solved or the player runs out of lives.
+while lives > 0 and "_" in display:
+
+#Starting Sequence and User Input
+    print(f"************** {lives}/6 LIVES LEFT **************.")
+    print(HANGMAN_ART[number_of_guesses])
+    print("".join(display))
+    print(f'''You have already guessed the following letters - {", ".join(user_guess_list)}''')
+    user_guess = input("Please submit your next guess here:").lower()
+
+#Check if letter has been guessed before
+    if user_guess in user_guess_list:
+        print(f"You have already guessed the letter {user_guess}. Please guess again")
+    else:
+        user_guess_list.append(user_guess)
+
+ # Evaluate Guesses against Answer
+        if user_guess not in answer:
+            number_of_guesses += 1
+        else:
+            display = []
+            for letter in answer: #Loop to build output populating letters when guessed by user
+                if letter in user_guess_list:
+                    display.append(letter)
+                else:
+                    display.append("_")
+
+        lives = 6 - number_of_guesses
+
+# End game output
+if lives == 0:
+    print("*********************************************")
+    print("*********************************************")
+    print("**************** YOU LOSE!!! ****************")
+    print("*********************************************")
+    print("*********************************************")
+    print(f"The word was {answer}.")
+else:
+    print("*********************************************")
+    print("*********************************************")
+    print("**************** YOU WIN!!!! ****************")
+    print("*********************************************")
+    print("*********************************************")
+    print(f"The word was {answer}.")
+
