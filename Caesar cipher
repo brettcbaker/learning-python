@@ -1,0 +1,43 @@
+# --------------------------------------------------------------------------- #
+#  List                                                                 #
+# --------------------------------------------------------------------------- #
+
+alphabet = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
+
+# --------------------------------------------------------------------------- #
+#  Functions                                                           #
+# --------------------------------------------------------------------------- #
+
+def cipher(original_text, shift, encrypt_or_decrypt):
+
+    if encrypt_or_decrypt == "decrypt":
+        shift *= -1
+
+    cipher_text = ""
+
+    for letters in original_text:
+        if letters in alphabet:
+            shifted_position = (alphabet.index(letters) + shift)
+            shifted_position %= len(alphabet) #modular keeps shift in 0-25
+            cipher_text += alphabet[shifted_position]
+        else: cipher_text += letters
+
+    print(f"Here is the {encrypt_or_decrypt}ed result: {cipher_text}")
+
+# --------------------------------------------------------------------------- #
+#  Running the Code                                                           #
+# --------------------------------------------------------------------------- #
+
+continue_running = True
+while continue_running:
+    encrypt_or_decrypt = input("Encrypt or Decrypt:").lower()
+    original_text = input("Type your text here:").lower()
+    shift = int(input("Number of Characters to Shift the Message:"))
+
+
+    cipher(original_text,shift, encrypt_or_decrypt)
+
+    run_again = input("Would you like to run again: 'Yes' or 'No'?").lower()
+    if run_again == "no":
+        continue_running = False
+        print("Goodbye")
